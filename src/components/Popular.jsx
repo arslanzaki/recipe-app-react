@@ -10,28 +10,36 @@ function Popular() {
   }, []);
 
   const getPopular = async () => {
-    const api = await fetch(
-      `https://api.spoonacular.com/recipes/random?apiKey=${process.env.REACT_APP_RECIPES_API_KEY}&number=10`
-    );
-    const data = await api.json();
-    setPopular(data.recipes);
+    const check = localStorage.getItem("popular");
+    if (!check) {
+      const api = await fetch(
+        `https://api.spoonacular.com/recipes/random?apiKey=${process.env.REACT_APP_RECIPES_API_KEY}&number=10`
+      );
+      const data = await api.json();
+      localStorage.setItem("popular", JSON.stringify(data.recipes));
+      setPopular(data.recipes);
+      console.log(data.recipes);
+    } else {
+      console.log("Parsed")
+      setPopular(JSON.parse(check));
+    }
   };
   return (
     <Wrapper>
       <h3>Popular Picks</h3>
       <Splide
         options={{
-          perPage: 3,
+          perPage: 4,
           arrows: false,
           pagination: false,
           drag: "free",
-          gap: "5rem",
+          gap: "2.5rem",
         }}
       >
         {popular.map((recipe) => {
           return (
-            <SplideSlide>
-              <Card key={recipe.id}>
+            <SplideSlide key={recipe.id}>
+              <Card>
                 <p>{recipe.title}</p>
                 <img src={recipe.image} alt={recipe.title} />
                 <Gradient />
@@ -49,7 +57,7 @@ const Wrapper = styled.div`
 `;
 
 const Card = styled.div`
-  min-height: 25rem;
+  min-height: 12rem;
   border-radius: 2rem;
   overflow: hidden;
   position: relative;
