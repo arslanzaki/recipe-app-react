@@ -1,24 +1,25 @@
-import React, { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
-import { motion } from "framer-motion";
-import { Link, useParams } from "react-router-dom";
 
-function Cuisine() {
-  const [cuisine, setCuisine] = useState([]);
+function Searched() {
+  const [searchedRecipes, setSearchedRecipes] = useState([]);
   let params = useParams();
-  const getCuisine = async (name) => {
+
+  const getSearched = async (name) => {
     const api = await fetch(
-      `https://api.spoonacular.com/recipes/complexSearch?apiKey=${process.env.REACT_APP_RECIPES_API_KEY}&cuisine=${name}`
+      `https://api.spoonacular.com/recipes/complexSearch?apiKey=${process.env.REACT_APP_RECIPES_API_KEY}&query=${name}`
     );
     const data = await api.json();
-    setCuisine(data.results);
+    setSearchedRecipes(data.results);
   };
+
   useEffect(() => {
-    getCuisine(params.type);
-  }, [params.type]);
+    getSearched(params.search);
+  }, [params.search]);
   return (
     <Grid>
-      {cuisine.map((item) => {
+      {searchedRecipes.map((item) => {
         return (
           <Card key={item.id}>
             <img src={item.image} alt="" />
@@ -50,4 +51,4 @@ const Card = styled.div`
   }
 `;
 
-export default Cuisine;
+export default Searched;
